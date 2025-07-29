@@ -5,6 +5,8 @@ import time
 import requests
 import streamlit as st
 import os
+import zipfile
+import io
 
 # 将角色配置直接定义在代码中
 ROLES_CONFIG = [
@@ -12,26 +14,23 @@ ROLES_CONFIG = [
         "name": "小蜗牛宝宝",
         "voiceID": "moss_audio_bcba52f7-6b7d-11f0-91e6-02fdcf4c792f",
         "voice speed": "0.85",
-        "emotion": "happy",
         "model": "speech-02-hd"
     },
     {
         "name": "小猪宝宝",
         "voiceID": "moss_audio_f2cc7c3b-6b7e-11f0-a61f-0aa8ddd4fb3f",
         "voice speed": "0.99",
-        "emotion": "happy",
         "model": "speech-02-hd"
     },
     {
         "name": "小鳄鱼宝宝",
         "voiceID": "moss_audio_4b0cd404-6b7e-11f0-bf93-9a83873876d1",
         "voice speed": "0.99",
-        "emotion": "happy",
         "model": "speech-02-hd"
     }
 ]
 
-def generate_speech(text_to_speak, role_config, group_id, api_key):
+def generate_speech(text_to_speak, role_config, group_id, api_key, emotion, base_filename=None):
     """
     调用 MiniMax API 将文本转换为语音并返回文件路径。
     """
@@ -54,7 +53,7 @@ def generate_speech(text_to_speak, role_config, group_id, api_key):
             "speed": float(role_config.get("voice speed", 1.0)),
             "vol": 1.0,
             "pitch": 0,
-            "emotion": role_config.get("emotion", "neutral")
+            "emotion": emotion
         },
         "audio_setting": {
             "sample_rate": 32000,
@@ -76,11 +75,15 @@ def generate_speech(text_to_speak, role_config, group_id, api_key):
             if audio_hex:
                 audio_bytes = bytes.fromhex(audio_hex)
                 
-                timestamp = int(time.time())
                 # 确保输出目录存在
                 if not os.path.exists("outputs"):
                     os.makedirs("outputs")
-                file_name = f"outputs/{role_config['name']}_output_{timestamp}.mp3"
+
+                if base_filename:
+                    file_name = f"outputs/{base_filename}_{role_config['name']}.mp3"
+                else:
+                    timestamp = int(time.time())
+                    file_name = f"outputs/{role_config['name']}_output_{timestamp}.mp3"
                 
                 with open(file_name, "wb") as f:
                     f.write(audio_bytes)
@@ -120,6 +123,11 @@ with st.sidebar:
 
 st.info("请在下方的文本框中输入您想要转换为语音的文本，然后点击“生成语音”按钮。")
 
+# Emotion selection
+emotion_options = ["happy", "sad", "angry", "fearful", "disgusted", "surprised", "neutral"]
+selected_emotion = st.selectbox("选择一个情绪", emotion_options, index=0)
+
+base_filename_input = st.text_input("输入基础文件名（可选）")
 text_to_convert = st.text_area("输入文本", height=150)
 
 if st.button("生成语音"):
@@ -134,13 +142,17 @@ if st.button("生成语音"):
         all_successful = True
         generated_files = []
 
+        base_filename = base_filename_input.strip() if base_filename_input else None
+
         for role in ROLES_CONFIG:
             with st.spinner(f"正在为角色 '{role['name']}' 生成语音..."):
                 file_path = generate_speech(
                     text_to_convert,
                     role,
                     st.session_state["group_id"],
-                    st.session_state["api_key"]
+                    st.session_state["api_key"],
+                    emotion=selected_emotion,
+                    base_filename=base_filename
                 )
             
             if file_path:
@@ -158,3 +170,16 @@ if st.button("生成语音"):
             for role_name, file_path in generated_files:
                 st.markdown(f"**角色：{role_name}**")
                 st.audio(file_path, format='audio/mp3')
+
+            # Create a zip file in memory
+            zip_buffer = io.BytesIO()
+            with zipfile.ZipFile(zip_buffer, "a", zipfile.ZIP_DEFLATED, False) as zip_file:
+                for _, file_path in generated_files:
+                    zip_file.write(file_path, os.path.basename(file_path))
+            
+            st.download_button(
+                label="一键全部下载",
+                data=zip_buffer.getvalue(),
+                file_name="generated_audios.zip",
+                mime="application/zip"
+            )
