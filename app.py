@@ -18,14 +18,14 @@ ROLES_CONFIG = [
     },
     {
         "name": "小猪宝宝",
-        "voiceID": "moss_audio_f2cc7c3b-6b7e-11f0-a61f-0aa8ddd4fb3f",
+        "voiceID": "moss_audio_69366bd0-729f-11f0-8f2e-c6962c94cb82",
         "voice speed": "0.99",
         "model": "speech-02-hd"
     },
     {
         "name": "小鳄鱼宝宝",
         "voiceID": "moss_audio_4b0cd404-6b7e-11f0-bf93-9a83873876d1",
-        "voice speed": "0.99",
+        "voice speed": "0.96",
         "model": "speech-02-hd"
     }
 ]
@@ -56,8 +56,8 @@ def generate_speech(text_to_speak, role_config, group_id, api_key, emotion, base
             "emotion": emotion
         },
         "audio_setting": {
-            "sample_rate": 32000,
-            "bitrate": 128000,
+            "sample_rate": 44100,
+            "bitrate": 256000,
             "format": "mp3",
             "channel": 1
         },
