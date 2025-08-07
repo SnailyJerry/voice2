@@ -12,7 +12,7 @@ import io
 ROLES_CONFIG = [
     {
         "name": "小蜗牛宝宝",
-        "voiceID": "moss_audio_bcba52f7-6b7d-11f0-91e6-02fdcf4c792f",
+        "voiceID": "moss_audio_f0666a48-7334-11f0-87d3-b63243124dc4",
         "voice speed": "0.85",
         "model": "speech-02-hd"
     },
@@ -24,7 +24,7 @@ ROLES_CONFIG = [
     },
     {
         "name": "小鳄鱼宝宝",
-        "voiceID": "moss_audio_4b0cd404-6b7e-11f0-bf93-9a83873876d1",
+        "voiceID": "moss_audio_439ee64a-7334-11f0-8263-fe5a2fe98ec8",
         "voice speed": "0.96",
         "model": "speech-02-hd"
     }
@@ -45,7 +45,7 @@ def generate_speech(text_to_speak, role_config, group_id, api_key, emotion, base
     }
     
     payload = {
-        "model": role_config.get("model", "speech-02-hd"),
+        "model": role_config.get("model", "speech-2.5-hd-preview"),
         "text": text_to_speak,
         "stream": False,
         "voice_setting": {
