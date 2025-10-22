@@ -16,21 +16,30 @@ ROLES_CONFIG = [
         "voiceID": "moss_audio_f0666a48-7334-11f0-87d3-b63243124dc4",
         "voice speed": "0.85",
         "model": "speech-2.5-hd-preview",
-        "category": "自定义角色"
+        "category": "自定义角色",
+        "default_speed": 0.96,
+        "default_pitch": 0,
+        "default_emotion": "happy"
     },
     {
         "name": "小猪宝宝",
         "voiceID": "moss_audio_6ce18488-740c-11f0-b242-1e4178e90ad2",
         "voice speed": "0.99",
         "model": "speech-2.5-hd-preview",
-        "category": "自定义角色"
+        "category": "自定义角色",
+        "default_speed": 1.0,
+        "default_pitch": 1,
+        "default_emotion": "happy"
     },
     {
         "name": "小鳄鱼宝宝",
         "voiceID": "moss_audio_8d5b1cb7-a8c5-11f0-aa74-6a175ee91adb",
         "voice speed": "0.99",
         "model": "speech-2.5-hd-preview",
-        "category": "自定义角色"
+        "category": "自定义角色",
+        "default_speed": 0.97,
+        "default_pitch": -2,
+        "default_emotion": "happy"
     },
     # 新增的系统音色
     {
@@ -154,6 +163,27 @@ ROLES_CONFIG = [
     }
 ]
 
+def get_smart_defaults(selected_roles):
+    """
+    根据选中的角色计算智能默认值
+    如果只选中了一个角色且有默认值，使用该角色的默认值
+    否则使用系统默认值
+    """
+    if len(selected_roles) == 1:
+        role = selected_roles[0]
+        return {
+            "speed": role.get("default_speed", 1.0),
+            "pitch": role.get("default_pitch", 0),
+            "emotion": role.get("default_emotion", "happy")
+        }
+    else:
+        # 多个角色时，使用系统默认值
+        return {
+            "speed": 1.0,
+            "pitch": 0,
+            "emotion": "happy"
+        }
+
 def generate_speech(text_to_speak, role_config, group_id, api_key, emotion, speed, pitch, base_filename=None):
     """
     调用 MiniMax API 将文本转换为语音并返回文件路径。
@@ -253,9 +283,9 @@ col1, col2 = st.columns(2)
 with col1:
     generation_mode = st.radio(
         "生成模式",
-        ["全部生成", "选择生成"],
+        ["选择生成", "全部生成"],
         index=0,
-        help="全部生成：为所有角色生成语音\n选择生成：只为选中的角色生成语音"
+        help="选择生成：只为选中的角色生成语音\n全部生成：为所有角色生成语音"
     )
 
 with col2:
@@ -267,7 +297,7 @@ with col2:
         st.write("**自定义角色：**")
         selected_custom = []
         for role in custom_roles:
-            if st.checkbox(f"{role['name']}", key=f"custom_{role['name']}"):
+            if st.checkbox(f"{role['name']}", key=f"custom_{role['name']}", value=True):
                 selected_custom.append(role)
 
         st.write("**系统音色：**")
@@ -283,17 +313,25 @@ with col2:
         else:
             st.warning("请至少选择一个角色")
     else:
+        # 全部生成模式
         selected_roles = ROLES_CONFIG
         st.info(f"将为所有 {len(ROLES_CONFIG)} 个角色生成语音")
+
+# 计算智能默认值
+if generation_mode == "选择生成" and selected_roles:
+    smart_defaults = get_smart_defaults(selected_roles)
+else:
+    smart_defaults = {"speed": 1.0, "pitch": 0, "emotion": "happy"}
 
 # Emotion selection
 st.subheader("🎵 语音参数")
 emotion_options = ["happy", "sad", "angry", "fearful", "disgusted", "surprised", "neutral"]
-selected_emotion = st.selectbox("选择一个情绪", emotion_options, index=0)
+default_emotion_index = emotion_options.index(smart_defaults["emotion"]) if smart_defaults["emotion"] in emotion_options else 0
+selected_emotion = st.selectbox("选择一个情绪", emotion_options, index=default_emotion_index)
 
 # Speed and Pitch selection
-selected_speed = st.slider("选择语速", min_value=0.5, max_value=2.0, value=1.0, step=0.01)
-selected_pitch = st.slider("选择音调", min_value=-12, max_value=12, value=0, step=1)
+selected_speed = st.slider("选择语速", min_value=0.5, max_value=2.0, value=smart_defaults["speed"], step=0.01)
+selected_pitch = st.slider("选择音调", min_value=-12, max_value=12, value=smart_defaults["pitch"], step=1)
 
 base_filename_input = st.text_input("输入基础文件名（可选）")
 text_to_convert = st.text_area("输入文本", height=150)
