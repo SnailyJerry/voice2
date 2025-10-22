@@ -10,27 +10,151 @@ import io
 
 # 将角色配置直接定义在代码中
 ROLES_CONFIG = [
+    # 原有的自定义角色
     {
         "name": "小蜗牛宝宝",
         "voiceID": "moss_audio_f0666a48-7334-11f0-87d3-b63243124dc4",
         "voice speed": "0.85",
-        "model": "speech-02-hd"
+        "model": "speech-2.5-hd-preview",
+        "category": "自定义角色"
     },
     {
         "name": "小猪宝宝",
-        "voiceID": "moss_audio_69366bd0-729f-11f0-8f2e-c6962c94cb82",
+        "voiceID": "moss_audio_6ce18488-740c-11f0-b242-1e4178e90ad2",
         "voice speed": "0.99",
-        "model": "speech-02-hd"
+        "model": "speech-2.5-hd-preview",
+        "category": "自定义角色"
     },
     {
         "name": "小鳄鱼宝宝",
-        "voiceID": "moss_audio_439ee64a-7334-11f0-8263-fe5a2fe98ec8",
-        "voice speed": "0.96",
-        "model": "speech-02-hd"
+        "voiceID": "moss_audio_8d5b1cb7-a8c5-11f0-aa74-6a175ee91adb",
+        "voice speed": "0.99",
+        "model": "speech-2.5-hd-preview",
+        "category": "自定义角色"
+    },
+    # 新增的系统音色
+    {
+        "name": "智慧女性",
+        "voiceID": "Wise_Woman",
+        "voice speed": "1.0",
+        "model": "speech-2.5-hd-preview",
+        "category": "系统音色"
+    },
+    {
+        "name": "友好的人",
+        "voiceID": "Friendly_Person",
+        "voice speed": "1.0",
+        "model": "speech-2.5-hd-preview",
+        "category": "系统音色"
+    },
+    {
+        "name": "励志女孩",
+        "voiceID": "Inspirational_girl",
+        "voice speed": "1.0",
+        "model": "speech-2.5-hd-preview",
+        "category": "系统音色"
+    },
+    {
+        "name": "深沉男声",
+        "voiceID": "Deep_Voice_Man",
+        "voice speed": "1.0",
+        "model": "speech-2.5-hd-preview",
+        "category": "系统音色"
+    },
+    {
+        "name": "冷静女性",
+        "voiceID": "Calm_Woman",
+        "voice speed": "1.0",
+        "model": "speech-2.5-hd-preview",
+        "category": "系统音色"
+    },
+    {
+        "name": "随意男性",
+        "voiceID": "Casual_Guy",
+        "voice speed": "1.0",
+        "model": "speech-2.5-hd-preview",
+        "category": "系统音色"
+    },
+    {
+        "name": "活泼女孩",
+        "voiceID": "Lively_Girl",
+        "voice speed": "1.0",
+        "model": "speech-2.5-hd-preview",
+        "category": "系统音色"
+    },
+    {
+        "name": "耐心男性",
+        "voiceID": "Patient_Man",
+        "voice speed": "1.0",
+        "model": "speech-2.5-hd-preview",
+        "category": "系统音色"
+    },
+    {
+        "name": "年轻骑士",
+        "voiceID": "Young_Knight",
+        "voice speed": "1.0",
+        "model": "speech-2.5-hd-preview",
+        "category": "系统音色"
+    },
+    {
+        "name": "坚定男性",
+        "voiceID": "Determined_Man",
+        "voice speed": "1.0",
+        "model": "speech-2.5-hd-preview",
+        "category": "系统音色"
+    },
+    {
+        "name": "可爱女孩",
+        "voiceID": "Lovely_Girl",
+        "voice speed": "1.0",
+        "model": "speech-2.5-hd-preview",
+        "category": "系统音色"
+    },
+    {
+        "name": "正派男孩",
+        "voiceID": "Decent_Boy",
+        "voice speed": "1.0",
+        "model": "speech-2.5-hd-preview",
+        "category": "系统音色"
+    },
+    {
+        "name": "威严气质",
+        "voiceID": "Imposing_Manner",
+        "voice speed": "1.0",
+        "model": "speech-2.5-hd-preview",
+        "category": "系统音色"
+    },
+    {
+        "name": "优雅男性",
+        "voiceID": "Elegant_Man",
+        "voice speed": "1.0",
+        "model": "speech-2.5-hd-preview",
+        "category": "系统音色"
+    },
+    {
+        "name": "女修道院院长",
+        "voiceID": "Abbess",
+        "voice speed": "1.0",
+        "model": "speech-2.5-hd-preview",
+        "category": "系统音色"
+    },
+    {
+        "name": "甜美女孩2",
+        "voiceID": "Sweet_Girl_2",
+        "voice speed": "1.0",
+        "model": "speech-2.5-hd-preview",
+        "category": "系统音色"
+    },
+    {
+        "name": "活力女孩",
+        "voiceID": "Exuberant_Girl",
+        "voice speed": "1.0",
+        "model": "speech-2.5-hd-preview",
+        "category": "系统音色"
     }
 ]
 
-def generate_speech(text_to_speak, role_config, group_id, api_key, emotion, base_filename=None):
+def generate_speech(text_to_speak, role_config, group_id, api_key, emotion, speed, pitch, base_filename=None):
     """
     调用 MiniMax API 将文本转换为语音并返回文件路径。
     """
@@ -45,21 +169,21 @@ def generate_speech(text_to_speak, role_config, group_id, api_key, emotion, base
     }
     
     payload = {
-        "model": role_config.get("model", "speech-2.5-hd-preview"),
+        "model": role_config.get("model", "speech-02-hd"),
         "text": text_to_speak,
         "stream": False,
         "voice_setting": {
             "voice_id": role_config.get("voiceID"),
-            "speed": float(role_config.get("voice speed", 1.0)),
+            "speed": speed,
             "vol": 1.0,
-            "pitch": 0,
+            "pitch": pitch,
             "emotion": emotion
         },
         "audio_setting": {
             "sample_rate": 44100,
-            "bitrate": 256000,
-            "format": "mp3",
-            "channel": 1
+            "bitrate": 320000,
+            "format": "wav",
+            "channel": 2
         },
         "output_format": "hex"
     }
@@ -80,10 +204,10 @@ def generate_speech(text_to_speak, role_config, group_id, api_key, emotion, base
                     os.makedirs("outputs")
 
                 if base_filename:
-                    file_name = f"outputs/{base_filename}_{role_config['name']}.mp3"
+                    file_name = f"outputs/{base_filename}_{role_config['name']}.wav"
                 else:
                     timestamp = int(time.time())
-                    file_name = f"outputs/{role_config['name']}_output_{timestamp}.mp3"
+                    file_name = f"outputs/{role_config['name']}_output_{timestamp}.wav"
                 
                 with open(file_name, "wb") as f:
                     f.write(audio_bytes)
@@ -123,9 +247,54 @@ with st.sidebar:
 
 st.info("请在下方的文本框中输入您想要转换为语音的文本，然后点击“生成语音”按钮。")
 
+# 角色选择部分
+st.subheader("🎭 角色选择")
+col1, col2 = st.columns(2)
+
+with col1:
+    generation_mode = st.radio(
+        "生成模式",
+        ["全部生成", "选择生成"],
+        index=0,
+        help="全部生成：为所有角色生成语音\n选择生成：只为选中的角色生成语音"
+    )
+
+with col2:
+    if generation_mode == "选择生成":
+        # 按分类显示角色选择
+        custom_roles = [role for role in ROLES_CONFIG if role.get("category") == "自定义角色"]
+        system_roles = [role for role in ROLES_CONFIG if role.get("category") == "系统音色"]
+
+        st.write("**自定义角色：**")
+        selected_custom = []
+        for role in custom_roles:
+            if st.checkbox(f"{role['name']}", key=f"custom_{role['name']}"):
+                selected_custom.append(role)
+
+        st.write("**系统音色：**")
+        selected_system = []
+        for role in system_roles:
+            if st.checkbox(f"{role['name']}", key=f"system_{role['name']}"):
+                selected_system.append(role)
+
+        selected_roles = selected_custom + selected_system
+
+        if selected_roles:
+            st.success(f"已选择 {len(selected_roles)} 个角色")
+        else:
+            st.warning("请至少选择一个角色")
+    else:
+        selected_roles = ROLES_CONFIG
+        st.info(f"将为所有 {len(ROLES_CONFIG)} 个角色生成语音")
+
 # Emotion selection
+st.subheader("🎵 语音参数")
 emotion_options = ["happy", "sad", "angry", "fearful", "disgusted", "surprised", "neutral"]
 selected_emotion = st.selectbox("选择一个情绪", emotion_options, index=0)
+
+# Speed and Pitch selection
+selected_speed = st.slider("选择语速", min_value=0.5, max_value=2.0, value=1.0, step=0.01)
+selected_pitch = st.slider("选择音调", min_value=-12, max_value=12, value=0, step=1)
 
 base_filename_input = st.text_input("输入基础文件名（可选）")
 text_to_convert = st.text_area("输入文本", height=150)
@@ -136,15 +305,20 @@ if st.button("生成语音"):
         st.error("请在左侧边栏中输入您的 Group ID 和 API Key。")
     elif not text_to_convert.strip():
         st.warning("请输入要转换为语音的文本。")
+    elif generation_mode == "选择生成" and not selected_roles:
+        st.warning("请至少选择一个角色进行生成。")
     else:
-        st.success("正在为所有角色生成语音...")
-        
+        # 根据生成模式确定要使用的角色
+        roles_to_generate = selected_roles if generation_mode == "选择生成" else ROLES_CONFIG
+
+        st.success(f"正在为 {len(roles_to_generate)} 个角色生成语音...")
+
         all_successful = True
         generated_files = []
 
         base_filename = base_filename_input.strip() if base_filename_input else None
 
-        for role in ROLES_CONFIG:
+        for role in roles_to_generate:
             with st.spinner(f"正在为角色 '{role['name']}' 生成语音..."):
                 file_path = generate_speech(
                     text_to_convert,
@@ -152,6 +326,8 @@ if st.button("生成语音"):
                     st.session_state["group_id"],
                     st.session_state["api_key"],
                     emotion=selected_emotion,
+                    speed=selected_speed,
+                    pitch=selected_pitch,
                     base_filename=base_filename
                 )
             
@@ -169,7 +345,7 @@ if st.button("生成语音"):
             st.subheader("播放生成的音频：")
             for role_name, file_path in generated_files:
                 st.markdown(f"**角色：{role_name}**")
-                st.audio(file_path, format='audio/mp3')
+                st.audio(file_path, format='audio/wav')
 
             # Create a zip file in memory
             zip_buffer = io.BytesIO()
