@@ -181,7 +181,6 @@ def generate_speech(text_to_speak, role_config, group_id, api_key, emotion, spee
         },
         "audio_setting": {
             "sample_rate": 44100,
-            "bitrate": 320000,
             "format": "wav",
             "channel": 2
         },
